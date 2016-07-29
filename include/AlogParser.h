@@ -7,15 +7,15 @@
 class TagParser;
 using namespace std;
 
+//interface
 class AlogParser
 {
     public:
         AlogParser();
         virtual ~AlogParser();
-        virtual string parserLine(string line)=0;
-
+        virtual string parserLine(string)=0;
+        virtual bool isMatch(string)=0;
     protected:
-
     private:
 };
 

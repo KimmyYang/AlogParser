@@ -52,6 +52,14 @@ string Utility::splitTagColon(string str){
     return str;
 }
 
+string Utility::splitDelim(string str, string delim){
+    size_t delimPos = str.find(delim);
+    if(delimPos!=string::npos){
+        return str.substr(0,delimPos);
+    }
+    return str;
+}
+
 string Utility::getNowTime2Str(){
     time_t     now = time(0);
     struct tm  tstruct;

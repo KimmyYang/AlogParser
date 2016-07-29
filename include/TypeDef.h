@@ -16,6 +16,7 @@ class AlogParser;
 #define DELIM_SPACE " "
 #define DELIM_COMMA ","
 #define DELIM_COLON ":"
+#define DELIM_SEMICOLON ";"
 #define DELIM_RIGHT_SLASH "\\" //add terminating character
 #define DELIM_LEFT_SLASH "/" //add terminating character
 #define TAG_TAG "-s"
@@ -87,4 +88,5 @@ typedef std::vector<LogData*> LogDataVector;
 typedef std::set<std::string> TagSet;
 typedef std::vector<std::string> LogLineVector;
 typedef std::map<string, AlogParser*> ParserMap;
+typedef std::map<int,string> ExceptionMap;
 #endif // TYPEDEF_H_INCLUDED

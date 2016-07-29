@@ -9,7 +9,7 @@ class TimeParser: public AlogParser
         TimeParser(string , string);
         virtual ~TimeParser();
         string parserLine(string line);
-
+        bool isMatch(string);
     protected:
     private:
         void printTime(TimeInfo _time);

@@ -10,6 +10,7 @@ class TIDParser:public AlogParser
         TIDParser(int);
         virtual ~TIDParser();
         string parserLine(string line);
+        bool isMatch(string);
 
     protected:
     private:

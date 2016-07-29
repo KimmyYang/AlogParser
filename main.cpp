@@ -13,16 +13,16 @@
 #include "Utility.h"
 #include "TypeDef.h"
 #include "Constants.h"
+#include "AlogParserException.h"
 
 using namespace std;
 
 //parameter
 string INPUT_FILE="";
-CommandMap* commandMap = NULL;
+CommandMap* commandMap = new CommandMap();
 ParserMap* parserMap = NULL;
-string TAG_ARRAY[4] = {TAG_START_TIME,TAG_PROCESS_ID,TAG_THREAD_ID,TAG_TAG};
+string TAG_ARRAY[5] = {TAG_START_TIME,TAG_PROCESS_ID,TAG_THREAD_ID,TAG_TAG,TAG_TAG_PROFILE};
 int TAG_ARRAY_SIZE = sizeof(TAG_ARRAY)/sizeof(*TAG_ARRAY);
-
 
 //function
 string getCommand(char* command[], int commad_size);
@@ -34,46 +34,34 @@ void createParserMap();
 
 int main(int argc, char* argv[])
 {
-    if(argc <= 1){
-        Utility::coute("Please input the parameter ..");
-        return ERROR_PARAMETER;
-    }
-
-    string sArgv = argv[1];
-    if(sArgv==TAG_HELP){
-        Utility::couti("Print help ..");
-        return SUCCESS;
-    }
     try{
+        if(argc <= 1){
+            throw AlogParserException(ERROR_PARAMETER);
+        }
+
+        string sArgv = argv[1];
+        if(sArgv==TAG_HELP){
+            //has not implement yet ..
+            return SUCCESS;
+        }
         //compose arguments
         setCommandMap(argv, argc);
-    }
-    catch(int error){
-        cerr<<"error  = "<<error<<endl;
-        return error;
-    }
-    INPUT_FILE = getContent(TAG_FILE);
+        INPUT_FILE = getContent(TAG_FILE);
+        cout<<"INPUT_FILE = "<<INPUT_FILE<<endl;
+        if(INPUT_FILE.empty()){
+            throw AlogParserException(ERROR_PARAMETER);
+        }
 
-    if(INPUT_FILE.empty()){
-        Utility::coute("File is null !!");
-        return ERROR_PARAMETER;
-    }
-    cout<<"INPUT_FILE = "<<INPUT_FILE<<endl;
-    cout<<"TAG_ARRAY_SIZE = "<<TAG_ARRAY_SIZE<<endl;
+        //open file ..
+        std::ifstream input(INPUT_FILE);
+        if(!input.is_open()){
+            throw AlogParserException(ERROR_OPEN_FILE);
+        }
 
-    //open file ..
-    std::ifstream input(INPUT_FILE);
-    if(!input.is_open()){
-        Utility::coutw("Can't open file : "+INPUT_FILE);
-        return ERROR_OPEN_FILE;
-    }
-
-    try{
         //start parser file ...
         AlogParser *parser = NULL;
         AlogExport *writer = new AlogExport(INPUT_FILE);
         int index = 0;
-        bool isAbandon = true;
         string _line;
         createParserMap();
         cout<<"---------------------------------------------------------------"<<endl<<endl;
@@ -81,42 +69,36 @@ int main(int argc, char* argv[])
         {
             index = 0;
             _line = line;
-            isAbandon = true;
 
             while(index<TAG_ARRAY_SIZE | getParser(&parser,TAG_ARRAY[index])){
 
                 if(parser!=NULL) {
-
                     line = parser->parserLine(line);
                     if(line == EMPTY_STRING){
                         break;
-                        //isAbandon = true;
-                        //line = _line;
                     }
-                    //else isAbandon = false;
                 }
                 ++index;
                 if(index == TAG_ARRAY_SIZE)break;
             }
-    #if (_DEBUG)
-                //cout<<"line = "<<line<<endl;
-    #endif
-
             if(line!=EMPTY_STRING){//match all conditions
+#if (_VDEBUG)
                 cout<<"save line = "<<line<<endl;
+#endif
                 writer->saveLine(line);
             }
         }
+#if (_VDEBUG)
         //writer->printLine();
-
+#endif
         //write parser file ...
         writer->writeFile();
         input.close();
-    }catch(int error){
-        cerr<<"error = "<<error<<endl;
-        return error;
+    }catch(AlogParserException &ex){//AlogParserException
+        cerr<<"[Exception] code:"<<ex.code()<<", what:"<<ex.what()<<endl;
+        return ex.code();
     }catch(exception e){
-        cerr<<"Exception : "<<e.what()<<endl;
+        cerr<<"[Exception] what:"<<e.what()<<endl;
         return ERROR_GENERIC;
     }
     return SUCCESS;
@@ -135,12 +117,14 @@ void createParserMap(){
             if(tag == TAG_START_TIME)parser = new TimeParser(getContent(TAG_START_TIME),getContent(TAG_END_TIME));
             else if(tag == TAG_PROCESS_ID)parser = new PIDParser(Utility::Str2Int(getContent(TAG_PROCESS_ID)));
             else if(tag == TAG_THREAD_ID)parser = new TIDParser(Utility::Str2Int(getContent(TAG_THREAD_ID)));
-            else if(tag == TAG_TAG)parser = new TagParser(getContent(TAG_TAG));
-            else{
+            else if(tag == TAG_TAG || tag == TAG_TAG_PROFILE){
+                parser = new TagParser(tag, getContent(tag));
+            }else{
                 cerr<<"[createParserMap] unknown tag = "<<tag<<endl;
                 continue;
             }
-            parserMap->insert(pair<string, AlogParser*>(tag,parser));
+            if(parserMap->find(tag) == parserMap->end())
+                parserMap->insert(pair<string, AlogParser*>(tag,parser));
         }
         else{
             parserMap->insert(pair<string, AlogParser*>(tag,NULL));
@@ -159,11 +143,9 @@ false : can't find parser
 */
 bool getParser(AlogParser **parser, string tag)
 {
-    //cout<<"tag = "<<tag<<endl;
     ParserMap::iterator itor = parserMap->find(tag);
     if(itor!=parserMap->end() && NULL!=itor->second){
         *parser = itor->second;
-        //cout<<"tag(itor->first) = "<<itor->first<<endl;
         return true;
     }
     else{
@@ -177,7 +159,6 @@ input : tag
 output : match content from the tag
 */
 string getContent(string tag){
-    if(commandMap==NULL)Utility::coute("[getContent] commandMap is null");
     CommandMap::iterator itor = commandMap->find(tag);
     if(itor!=commandMap->end()){
         return (itor->second)->content;
@@ -198,7 +179,6 @@ void setCommandMap(char* command[], int commad_size){
     CommandInfo* info;
     TokenVector *cmdVector = Utility::StrParser2Vector(getCommand(command, commad_size),DELIM_SEMICOLON);
 
-    if(commandMap==NULL)commandMap = new CommandMap();
     int vecSize = cmdVector->size();
     for(int i=0; i<vecSize; ++i){
         type = cmdVector->at(i);

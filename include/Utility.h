@@ -19,6 +19,7 @@ class Utility
         static void delete_pChar(char* cstr);
 
         static string splitTagColon(string str);
+        static string splitDelim(string str, string delim);
         static void coutw(string output);
         static void couti(string output);
         static void coute(string output);

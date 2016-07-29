@@ -10,7 +10,7 @@ class PIDParser:public AlogParser
         PIDParser(int );
         virtual ~PIDParser();
         string parserLine(string line);
-
+        bool isMatch(string);
     protected:
     private:
         int mPID;
