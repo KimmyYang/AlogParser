@@ -25,6 +25,9 @@ class AlogParser;
 #define TAG_END_TIME "-et"
 #define TAG_PROCESS_ID "-p"
 #define TAG_THREAD_ID "-t"
+#define TAG_CONTENT "-c"
+#define TAG_OR "-or"
+#define TAG_AND "-and"
 #define TAG_FILE "-f"
 #define TAG_HELP "-h"
 
@@ -87,6 +90,8 @@ typedef std::map<std::string,CommandInfo*> CommandMap;
 typedef std::vector<LogData*> LogDataVector;
 typedef std::set<std::string> TagSet;
 typedef std::vector<std::string> LogLineVector;
+typedef std::vector<std::string> ContentVector;
 typedef std::map<string, AlogParser*> ParserMap;
 typedef std::map<int,string> ExceptionMap;
+typedef std::map<string, int> ConditionMap;
 #endif // TYPEDEF_H_INCLUDED

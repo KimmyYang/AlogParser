@@ -13,7 +13,6 @@ class AlogExport
         virtual ~AlogExport();
         void writeFile();
         void saveLine(string);
-        void saveLine_tmp(string);
         void printLine();
 
     protected:
