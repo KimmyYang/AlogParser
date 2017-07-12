@@ -3,7 +3,10 @@
 * You can input tag, content, time, process/thread id,etc.. and the AlogParser will help to filter the log you want.
 
 # Input Format
-* Eample: ./AlogParser -st 07-25 18:37:18.884 -et 07-25 18:37:18.889 -p 4514 -c E:\Kimmy\test\ContentProfile.txt -f E:\Kimmy\test\phone_crash.log
+* Eample: 
+```sh
+./AlogParser -st 07-25 18:37:18.884 -et 07-25 18:37:18.889 -p 4514 -c E:\Kimmy\test\ContentProfile.txt -f E:\Kimmy\test\phone_crash.log
+```
 * start time : -st
 * end time : -et
 * process id : -p
