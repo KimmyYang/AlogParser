@@ -10,8 +10,10 @@
 class LogData;
 class AlogParser;
 #define _VDEBUG 0
-#define _DEBUG 1
+#define _DEBUG 0
+#define _OUTPUT_STREAM 1
 
+#define VERSION 2
 #define EMPTY_STRING ""
 #define DELIM_SPACE " "
 #define DELIM_COMMA ","
@@ -26,10 +28,12 @@ class AlogParser;
 #define TAG_PROCESS_ID "-p"
 #define TAG_THREAD_ID "-t"
 #define TAG_CONTENT "-c"
+#define TAG_CONTENT_PROFILE "-cp"
 #define TAG_OR "-or"
 #define TAG_AND "-and"
 #define TAG_FILE "-f"
 #define TAG_HELP "-h"
+#define TAG_VER "-v"
 
 #define compare_number(a, b) a<b?-1:a==b?0:1
 
@@ -90,7 +94,6 @@ typedef std::map<std::string,CommandInfo*> CommandMap;
 typedef std::vector<LogData*> LogDataVector;
 typedef std::set<std::string> TagSet;
 typedef std::vector<std::string> LogLineVector;
-typedef std::vector<std::string> ContentVector;
 typedef std::map<string, AlogParser*> ParserMap;
 typedef std::map<int,string> ExceptionMap;
 typedef std::map<string, int> ConditionMap;
