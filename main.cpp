@@ -30,14 +30,19 @@ int main(int argc, char* argv[])
         if(sArgv==TAG_HELP){
             //has not implement yet ..
             return SUCCESS;
+        }else if(sArgv==TAG_VER){
+            return VERSION;
         }
+
         //compose arguments
         ArgsManager *pArgs = ArgsManager::getArgsManager();
         pArgs->GenParser(argv, argc);
 
         //load file
         INPUT_FILE = pArgs->getContent(TAG_FILE);
+#if (_DEBUG)
         cout<<"INPUT_FILE = "<<INPUT_FILE<<endl;
+#endif
         if(INPUT_FILE.empty()){
             throw AlogParserException(ERROR_PARAMETER);
         }
@@ -54,8 +59,9 @@ int main(int argc, char* argv[])
         ParserCondition *condtion = ParserCondition::getParserCondtion(pArgs);
         int index = 0;
         string _line, tag;
-
+#if (_DEBUG)
         cout<<"---------------------------------------------------------------"<<endl<<endl;
+#endif
         for( std::string line; getline( input, line );)
         {
             index = 0;
@@ -64,7 +70,7 @@ int main(int argc, char* argv[])
             while(pArgs->hasParser(&parser,ArgsManager::TAG_ARRAY[index])){
                 tag = ArgsManager::TAG_ARRAY[index];
                 if(parser!=NULL) {
-
+                    //cout<<"line = "<<line<<endl;
                     line = parser->parserLine(line);
                     //cout<<"tag = "<<tag<<", line = "<<line<<endl;
                     condtion->update(tag, line==EMPTY_STRING?false:true);//update condition
@@ -87,10 +93,10 @@ int main(int argc, char* argv[])
         }
 #if (_DEBUG)
         cout<<"---------------------------------------------------------------"<<endl<<endl;
+#endif
         //writer->printLine();
         //write parser file ...
         writer->writeFile();
-#endif
         input.close();
     }catch(AlogParserException &ex){
         cerr<<"[Exception] code:"<<ex.code()<<", what:"<<ex.what()<<endl;

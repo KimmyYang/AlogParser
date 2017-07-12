@@ -22,7 +22,7 @@ class TagParser: public AlogParser
         void printTagVector();
         TagParser* mTagParser;
         ProfileLoader *mProfileLoader;
-        TokenVector *mTagVector;
+        TokenVector mTagVector;
 };
 
 #endif // TAGPARSER_H

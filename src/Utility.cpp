@@ -16,24 +16,23 @@ Utility::~Utility()
     //dtor
 }
 
-TokenVector* Utility::StrParser2Vector(string str, string delim){
+void Utility::StrParser2Vector(string str, string delim, TokenVector& _vector){
     size_t pos = 0;
-    TokenVector *tokenVector = new TokenVector();
-    tokenVector->clear();
+    //TokenVector *tokenVector = new TokenVector();
+    _vector.clear();
 
     while((pos=str.find(delim))!=string::npos){
-        tokenVector->push_back(str.substr(0,pos));
+        _vector.push_back(str.substr(0,pos));
 #if (_VDEBUG)
-    couti("[StrParser2Vector] token="+tokenVector->back());
+    couti("[StrParser2Vector] token="+_vector->back());
     cout<<"pos = "<<pos<<endl;
     cout<<"str = "<<str<<endl;
 #endif
         str.erase(0,pos+delim.length());
     }
     if(!str.empty()){
-        tokenVector->push_back(str);
+        _vector.push_back(str);
     }
-    return tokenVector;
 }
 
 int Utility::Str2Int(string str){

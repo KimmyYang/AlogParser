@@ -8,15 +8,17 @@ using namespace std;
 class ContentParser:public AlogParser
 {
     public:
-        ContentParser(string);
+        ContentParser(string,string);
         virtual ~ContentParser();
         string parserLine(string line);
         bool isMatch(string);
     protected:
     private:
-        void createContentMap(string filePath);
+        void createContentMap(string,string);
+        void loadProfile(string);
+        bool isPartialMatch(const string , string);
 
-        ContentVector* mContentVector;
+        TokenVector* mContentVector;
 };
 
 #endif // CONTENTPARSER_H

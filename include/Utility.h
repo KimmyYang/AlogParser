@@ -10,7 +10,7 @@ class Utility
         Utility();
         virtual ~Utility();
 
-        static TokenVector* StrParser2Vector(string str, string delim);
+        static void StrParser2Vector(string str, string delim, TokenVector& _vector);
         static int Str2Int(string str);
         static string Int2Str(int value);
         static string getNowTime2Str();
